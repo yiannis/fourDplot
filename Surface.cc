@@ -311,7 +311,7 @@ bool Surface::next()
       return false;
 
     // Advance to next index
-    if (s_currentSurfaceIndex == s_surfaceCacheSize) {
+    if (s_currentSurfaceIndex == s_surfaceCacheSize-1) {
       s_currentFrameIndex = s_currentSurfaceIndex = 0;
     } else {
       s_currentSurfaceIndex++;
@@ -334,7 +334,7 @@ bool Surface::next()
     // Create new Surface
     Surface::create( 0, s_currentFrameIndex ); 
   }
-  clog << "Surface::next(): Frame[" << s_currentFrameIndex << "]: ready." << endl;
+  clog << "Surface::next(): Frame[" << s_currentFrameIndex << "]: of '"<<s_NRframes<<"' ready." << endl;
 
   return true;
 }
@@ -345,13 +345,17 @@ bool Surface::previous()
     return false;
 
   if (s_surfaceCacheOn) {
-    // Advance to next index
-    s_currentSurfaceIndex--;
-    s_currentFrameIndex--;
+    // If at begining, and no loop, do nothing
+    if ((s_currentSurfaceIndex == 0) && !s_loop)
+      return false;
 
-    // Check for start of container
-    if (s_currentSurfaceIndex < 0)
-      s_currentFrameIndex = s_currentSurfaceIndex = s_loop ? s_currentSurfaceIndex-1 : 0;
+    // Advance to next index
+    if (s_currentSurfaceIndex == 0)
+      s_currentFrameIndex = s_currentSurfaceIndex = s_surfaceCacheSize-1;
+    else {
+      s_currentSurfaceIndex--;
+      s_currentFrameIndex--;
+    }
   } else { // Cache holds only one Surface
     // If at begining, and no loop, do nothing
     if ((s_currentFrameIndex == 0) && !s_loop)
@@ -369,6 +373,7 @@ bool Surface::previous()
     // Create new Surface
     Surface::create( 0, s_currentFrameIndex ); 
   }
+  clog << "Surface::previous(): Frame[" << s_currentFrameIndex << "]: of '"<<s_NRframes<<"' ready." << endl;
 
   return true;
 }
