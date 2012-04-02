@@ -215,8 +215,9 @@ void Surface::clearIndices()
 /// prerendered in the cache (as Sufrace objects), and
 /// 'vector Surface::s_surfaceCache' has a 1-1 relationship with,
 /// 'vector SurfaceImage::s_files', so s_currentSurfaceIndex == s_currentFrameIndex.
-/// Else, the cache keeps a size of one surface only.
-/// At first, using the first image frame or function at 't=0'.
+/// Else, the cache keeps a size of one surface only: s_currentSurfaceIndex == 0,
+/// s_currentFrameIndex = 't'/imageID.
+/// At first, using the first image frame, or function at 't=0'.
 /// Then every next Surface takes its place.
 void Surface::initSurfaceCache( const Arguments& argv, int FPS )
 {
@@ -282,7 +283,6 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
         SurfaceFunction::create( i, i ); 
         clog << "Create surface from input function\n";
       }
-      SurfaceFunction::s_code.t() = 0;
       break;
   }
 }
@@ -306,15 +306,19 @@ bool Surface::next()
     return false;
 
   if (s_surfaceCacheOn) {
-    // Advance to next index
-    s_currentSurfaceIndex++;
-    s_currentFrameIndex++;
+    // If at end, and no loop, do nothing
+    if ((s_currentSurfaceIndex == s_surfaceCacheSize-1) && !s_loop)
+      return false;
 
-    // Check for end of container
-    if (s_currentSurfaceIndex == s_surfaceCacheSize)
-      s_currentFrameIndex = s_currentSurfaceIndex = s_loop ? 0 : s_currentSurfaceIndex-1;
+    // Advance to next index
+    if (s_currentSurfaceIndex == s_surfaceCacheSize) {
+      s_currentFrameIndex = s_currentSurfaceIndex = 0;
+    } else {
+      s_currentSurfaceIndex++;
+      s_currentFrameIndex++;
+    }
   } else { // Cache holds only one Surface
-    // If at end, and no loop, do nothing 
+    // If at end, and no loop, do nothing
     if ((s_currentFrameIndex == s_NRframes-1) && !s_loop)
       return false;
 
@@ -330,6 +334,7 @@ bool Surface::next()
     // Create new Surface
     Surface::create( 0, s_currentFrameIndex ); 
   }
+  clog << "Surface::next(): Frame[" << s_currentFrameIndex << "]: ready." << endl;
 
   return true;
 }
@@ -348,7 +353,7 @@ bool Surface::previous()
     if (s_currentSurfaceIndex < 0)
       s_currentFrameIndex = s_currentSurfaceIndex = s_loop ? s_currentSurfaceIndex-1 : 0;
   } else { // Cache holds only one Surface
-    // If at begining, and no loop, do nothing 
+    // If at begining, and no loop, do nothing
     if ((s_currentFrameIndex == 0) && !s_loop)
       return false;
 
@@ -554,6 +559,7 @@ void SurfaceFunction::createVertices()
 {
   Executor& func = *m_func;
 
+  clog << "createVertices(): Create vertices for t=" << func.t() << endl;
 	if (m_vertices == NULL)
 		m_vertices = new float[3*m_points];
 
@@ -582,6 +588,8 @@ void SurfaceFunction::createVertices()
 // Static methods
 void SurfaceFunction::create(int cacheIndex, int timeIndex)
 {
+  s_code.t() = timeIndex;
+
   Surface* surface = new SurfaceFunction( s_xmin, s_xmax, s_ymin, s_ymax, s_points, &s_code );
 
   if (Surface::s_falseColors)
