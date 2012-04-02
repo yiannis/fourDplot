@@ -24,11 +24,14 @@ static const GLfloat mat_shininess[] = { 20.0 };
 static const GLfloat light_position[] = { 0.5, 0.5, 1, 0 };
 static const GLfloat white_light[] = { 1.0, 1.0, 1.0, 1.0 };
 
-extern const unsigned int FPS[] = { 5, 10, 15, 30, 50, 60, 75, 100, 120, 150, 200 };
+extern const unsigned int FPS[] = { 1, 5, 10, 15, 30, 50, 60, 75, 100, 120, 150, 200 };
 // Constants //
 
 
 // Globals (sorry, but this is just a glut demo!)
+int fpsIndex = 3; ///< Default is 30fps
+int fpsValues = (sizeof FPS)/sizeof(unsigned int);
+
 static float spinz = -45, spinx = -35, spiny = 0, spin_step = 1, spin_dir = 0;
 static Color bgColor = LIGHT_BLUE; ///< The background color
 static int win_width,  ///< The current window width
@@ -38,10 +41,7 @@ static float L,   ///<
              Ox,  ///<
              Oy,  ///<
              Oz;  ///<
-static unsigned int videoDelay = 30; ///< in milliseconds
-
-int fpsIndex = 3; ///< Default is 30fps
-int fpsValues = (sizeof FPS)/sizeof(unsigned int);
+static unsigned int videoDelay = 1000 / FPS[fpsIndex]; ///< in milliseconds
 // Globals //
 
 
@@ -168,9 +168,11 @@ void videoTimer(int value)
     return;
 
   if (Surface::next()) {
+    clog << "videoTimer(): Play next frame" << endl;
     glutPostRedisplay();
     glutTimerFunc(videoDelay, videoTimer, 0); // next videoTimer call milliseconds later
   } else {
+    clog << "videoTimer(): End of frames\n" << endl;
 		videoOn = false;
   }
 }
@@ -300,12 +302,14 @@ void keyboardFunc( unsigned char key, int x, int y )
       if (fpsIndex < fpsValues-1) {
         fpsIndex++;
         videoDelay = 1000 / FPS[fpsIndex];
+        clog << "Playing at " << FPS[fpsIndex] << "fps" << endl;
       }
 			break;
 		case '-':
       if (fpsIndex > 0) {
         fpsIndex--;
         videoDelay = 1000 / FPS[fpsIndex];
+        clog << "Playing at " << FPS[fpsIndex] << "fps" << endl;
       }
 			break;
     case 'z':
@@ -354,7 +358,7 @@ void dumpFrame( string file, string dir )
 		frame.write( dir+"/"+file );
 }
 
-void cleanup() //TODO
+void cleanup()
 {
   Surface::deleteSurfaceCache();
 }
