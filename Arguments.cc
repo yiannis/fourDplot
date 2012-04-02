@@ -108,7 +108,6 @@ void Arguments::printAllValues() const
   int size = min( (int)images.size(), 3 );
 
   cout << "multiply\t= "      << multiply << endl;
-  cout << "resample\t= "      << resample << endl;
   cout << "lights\t\t= "      << string(lights?"yes":"no") << endl;
   cout << "axis\t\t= "        << string(axis?"yes":"no") << endl;
   cout << "video\t\t= "       << string(renderVideo?"yes":"no") << endl;
@@ -117,17 +116,26 @@ void Arguments::printAllValues() const
   cout << "save-dir\t= "      << saveDir << endl;
   cout << "draw-mode\t= "     << drawModeStr << endl;
   cout << "false-colors\t= "  << string(falseColors?"yes":"no") << endl;
-  cout << "image-colors\t= "  << string(imageColors?"yes":"no") << endl;
-  cout << "images\t\t= ";
-  for (int i=0; i<size; i++)
-    cout << images[i] << " ";
-  if (images.size() > 3)
-    cout << "..." << endl;
-  else
-    cout << endl;
-  cout << "functionCode\t= "  << functionCode << endl;
-  cout << "points\t\t= "      << points << endl;
-  cout << "x:["<<xmin<<","<<xmax<<"] y:["<<ymin<<","<<ymax<<"]" << endl;
+
+  switch (mode) {
+    case IMAGE:
+      cout << "resample\t= "      << resample << endl;
+      cout << "image-colors\t= "  << string(imageColors?"yes":"no") << endl;
+      cout << "images\t\t= ";
+      for (int i=0; i<size; i++)
+        cout << images[i] << " ";
+      if (images.size() > 3)
+        cout << "..." << endl;
+      else
+        cout << endl;
+      break;
+    case PLOT:
+      cout << "functionCode\t= "  << functionCode << endl;
+      cout << "points\t\t= "      << points << endl;
+      cout << "duration\t= "      << duration << endl;
+      cout << "x:["<<xmin<<","<<xmax<<"] y:["<<ymin<<","<<ymax<<"]" << endl;
+      break;
+  }
 }
 
 void Arguments::printGivenValues() const
