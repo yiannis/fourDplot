@@ -560,6 +560,7 @@ SurfaceFunction::SurfaceFunction( float xmin, float xmax,
 SurfaceFunction::~SurfaceFunction()
 {}
 
+#include <cfloat>
 void SurfaceFunction::createVertices()
 {
   Executor& func = *m_func;
@@ -572,22 +573,26 @@ void SurfaceFunction::createVertices()
 
   func.x() = 0.0F;
   func.y() = 0.0F;
-	m_zMin = m_zMax = func.run();
+	m_zMin = FLT_MAX;
+  m_zMax = FLT_MIN;
 
 	float z;
 	float xstep = (m_xMax-m_xMin)/(m_xPoints-1);
 	float ystep = (m_yMax-m_yMin)/(m_yPoints-1);
 	for (int j=0; j<m_xPoints; j++)
-		for (int i=0; i<m_yPoints; i++)
-			{
+		for (int i=0; i<m_yPoints; i++) {
 				V.x(i,j) = func.x() = m_xMin+j*xstep;
 				V.y(i,j) = func.y() = m_yMin+i*ystep;
 
 				V.z(i,j) = z = func.run();
+        if (isnan(z) || isinf(z)) {
+          V.z(i,j) = 0.0F; //TODO V.z(i,j) = avgFromLocalArea(V,i,j);
+          continue;
+        }
 
 				if (z > m_zMax) m_zMax = z;
 				if (z < m_zMin) m_zMin = z;
-	}
+    }
 }
 
 // Static methods
