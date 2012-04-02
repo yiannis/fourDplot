@@ -124,21 +124,20 @@ inline float distance( Color x1, Color x2 )
 	return sqrt( pow( x1.r()-x2.r(), 2 ) + pow( x1.g()-x2.g(), 2 ) + pow( x1.b()-x2.b(), 2 ) );
 }
 
+/// Represents a false color scale.
 class ColorIndex {
 	private:
-		std::vector<Color> colorScale; //List of colors
+		std::vector<Color> m_colorScale; /// < The list of false colors
 
-		float top; //Maximum bw value
-		float bottom; //Minimum bw value
-		float D;
-		int N;
+		float m_top; ///< Maximum intensity value
+		float m_bottom; ///< Minimum intensity value
+		int m_N; ///< ID if last color
 
 	public:
-		ColorIndex( float t, float b, const std::vector<Color> cs ) : colorScale(cs), top(t), bottom(b)
-		{
-			N = colorScale.size() - 1;
-			D = (top-bottom)/N;
-		}
+    /// Takes the minimum and maximum intensity values and the false color list
+		ColorIndex( float min, float max, const std::vector<Color> cs ) :
+      m_colorScale(cs), m_top(max), m_bottom(min), m_N(cs.size()-1)
+		{}
 		~ColorIndex() {}
 
 		Color index( float value ) const;

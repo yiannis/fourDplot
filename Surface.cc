@@ -135,7 +135,7 @@ void Surface::createFalseColors( const vector<Color>& clist )
 	ArrayPoint3D<float> V( m_vertices, m_xPoints, m_yPoints, 3 );
 
 	Color pixel;
-	ColorIndex cindex( m_zMax, m_zMin, clist );
+	ColorIndex cindex( m_zMin, m_zMax, clist );
 	for (int i=0; i<m_yPoints; i++)
 		for (int j=0; j<m_xPoints; j++) {
 			pixel = cindex.index( V.z(i,j) );
