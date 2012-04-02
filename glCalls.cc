@@ -324,7 +324,7 @@ void keyboardFunc( unsigned char key, int x, int y )
       break;
 		case 'q':
       cleanup();
-			exit(0); //OMG! No cleanup at all...
+			exit(0);
 			break;
 		default:
 			cerr<<"Unknown key!"<<endl;

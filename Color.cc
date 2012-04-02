@@ -40,12 +40,12 @@ Color ColorIndex::index( float value ) const
 }
 
 
-Color WHITE( 1.0, 1.0, 1.0 );
-Color BLACK( 0.0, 0.0, 0.0 );
-Color RED( 1.0, 0.0, 0.0 );
-Color GREEN( 0.0, 1.0, 0.0 );
-Color BLUE( 0.0, 0.0, 1.0 );
-Color PINK( 244, 29, 244 );
-Color LIGHT_BLUE( 16, 242, 227 );
-Color YELLOW( 242, 231, 29 );
-Color ORANGE( 252, 150, 25 );
+const Color WHITE( 1.0, 1.0, 1.0 );
+const Color BLACK( 0.0, 0.0, 0.0 );
+const Color RED( 1.0, 0.0, 0.0 );
+const Color GREEN( 0.0, 1.0, 0.0 );
+const Color BLUE( 0.0, 0.0, 1.0 );
+const Color PINK( 244, 29, 244 );
+const Color LIGHT_BLUE( 16, 242, 227 );
+const Color YELLOW( 242, 231, 29 );
+const Color ORANGE( 252, 150, 25 );

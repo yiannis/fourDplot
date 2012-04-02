@@ -8,7 +8,7 @@
 enum colors { white = 0, black, blue, red, green, pink, light_blue, yellow, orange };
 
 class Color;
-extern Color WHITE, BLACK, BLUE, RED, GREEN, PINK, LIGHT_BLUE, YELLOW, ORANGE;
+extern const Color WHITE, BLACK, BLUE, RED, GREEN, PINK, LIGHT_BLUE, YELLOW, ORANGE;
 
 ///Color [holds its own values] <=> pixel [holds pointer to its values]
 ///  /\                               /\
