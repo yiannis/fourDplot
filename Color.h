@@ -116,7 +116,7 @@ class Color {
 		float g() const { return rgba[1]; }
 		float b() const { return rgba[2]; }
 		float a() const { return rgba[3]; }
-		void print() const { std::cout<<'['<<rgba[0]<<','<<rgba[1]<<','<<rgba[2]<<','<<rgba[3]<<']'; }
+		void print() const { std::cout<<'['<<rgba[0]<<','<<rgba[1]<<','<<rgba[2]<<','<<rgba[3]<<']'<<std::endl; }
 };
 
 inline float distance( Color x1, Color x2 )

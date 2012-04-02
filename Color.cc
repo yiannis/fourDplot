@@ -20,6 +20,11 @@ Color ColorIndex::index( float value ) const
   int i1 = (int)floor(ci);
   int i2 = (int)ceil(ci);
 
+  // If the fractional part is zero, it means we are given
+  // either the top or bottom value, so let's return that color:
+  if (d == 0)
+    return m_colorScale[i1];
+
   if (i1 < 0 || i1 > m_N) {
     std::cerr << "i1: '"<<i1<<"', out of range [0,"<<m_N<<"]" << std::endl;
     return WHITE;
