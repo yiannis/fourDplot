@@ -36,7 +36,8 @@ static float spinz = -45, spinx = -35, spiny = 0, spin_step = 1, spin_dir = 0;
 static Color bgColor = LIGHT_BLUE; ///< The background color
 static int win_width,  ///< The current window width
            win_height; ///< The current window height
-static bool videoOn = false; ///< If playing video
+static bool videoOn = false, ///< Is video timer ON
+            spinning; ///< Is spinning timer ON
 static float L,   ///< 
              Ox,  ///<
              Oy,  ///<
@@ -177,27 +178,33 @@ void videoTimer(int value)
   }
 }
 
-void idleFuncSpin()
+void spinTimer(int value)
 {
+  if (!spinning)
+    return;
+
 	spinz += spin_dir*spin_step;
-	glutPostRedisplay();
+  glutPostRedisplay();
+  glutTimerFunc(videoDelay, spinTimer, 0);
 }
 
-void mouseFunc( int button, int state, int x, int y )
+void mouseFuncTimer( int button, int state, int x, int y )
 {
 	if ( state == GLUT_DOWN )
 		switch (button) {
 			case GLUT_LEFT_BUTTON:
+        spinning = true;
 				spin_dir=1;
-				glutIdleFunc( idleFuncSpin );
+        glutTimerFunc(0, spinTimer, 0);
 				break;
 			case GLUT_RIGHT_BUTTON:
+        spinning = true;
 				spin_dir=-1;
-				glutIdleFunc( idleFuncSpin );
+        glutTimerFunc(0, spinTimer, 0);
 				break;
 		}
 	else
-		glutIdleFunc( NULL );
+    spinning = false;
 }
 
 void specialKeysFunc(int key, int x, int y)

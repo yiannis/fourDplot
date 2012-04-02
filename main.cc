@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   try {
     initLights();
     initFunc();
-    glutMouseFunc( mouseFunc );
+    glutMouseFunc( mouseFuncTimer );
     glutKeyboardFunc( keyboardFunc );
     glutSpecialFunc( specialKeysFunc );
     glutDisplayFunc( displayFunc );

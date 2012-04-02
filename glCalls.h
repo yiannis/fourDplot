@@ -7,7 +7,7 @@ void initLights();
 void initFunc();
 void displayFunc();
 void idleFuncSpin();
-void mouseFunc( int button, int state, int x, int y );
+void mouseFuncTimer( int button, int state, int x, int y );
 void specialKeysFunc(int key, int x, int y);
 void keyboardFunc( unsigned char key, int x, int y );
 void dumpFrame( std::string file = "", std::string dir = "" );
