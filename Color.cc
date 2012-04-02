@@ -14,6 +14,8 @@ Color ColorIndex::index( float value ) const
     std::cerr << "Value: '"<<value<<"', out of range ["<<m_bottom<<","<<m_top<<"]" << std::endl;
     return WHITE;
   }
+  if (m_top == m_bottom)
+    return m_colorScale[0];
 
   float ci = m_N*(value-m_bottom)/(m_top-m_bottom); ///< color index, mapped to [m_bottom,m_top]
   float d = ci - floor(ci); ///< Fractional part of 'ci'
