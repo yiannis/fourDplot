@@ -35,6 +35,10 @@ if (NOT GLUT_FOUND)
   MESSAGE(FATAL_ERROR "Did not find Glut development files.\nOn Ubuntu try:\n# apt-get install freeglut3-dev"
     )
 endif (NOT GLUT_FOUND)
+if (NOT OPENGL_GLU_FOUND)
+  MESSAGE(FATAL_ERROR "Did not find Mesa OpenGL utility library (GLU) development files.\nOn Ubuntu try:\n# apt-get install libglu1-mesa-dev"
+    )
+endif (NOT OPENGL_GLU_FOUND)
 
 INCLUDE_DIRECTORIES(
   "${CMAKE_SOURCE_DIR}/../calculator/"
