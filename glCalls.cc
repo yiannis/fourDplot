@@ -18,11 +18,14 @@ using namespace std;
 extern Arguments args;
 
 // Constants //
-static const GLfloat mat_specular[] = { 0.3, 0.3, 0.3, 1.0 };
-static const GLfloat mat_shininess[] = { 20.0 };
-//static const GLfloat light_position[] = { 1, 1, 1, 0 };
+static const GLfloat mat_specular[] = { 0.7, 0.7, 0.7, 1.0 };
+static const GLfloat soft_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+static const GLfloat mat_shininess[] = { 40.0 };
 static const GLfloat light_position[] = { 0.5, 0.5, 1, 0 };
 static const GLfloat white_light[] = { 1.0, 1.0, 1.0, 1.0 };
+static const GLfloat pale_blue_light[] = { 0.678, 0.847, 0.902, 1.0 };
+static const GLfloat light_gray[] = { 0.8, 0.8, 0.8, 1.0 };
+static const GLfloat dark_gray[] = { 0.3, 0.3, 0.3, 1.0 };
 
 extern const unsigned int FPS[] = { 1, 5, 10, 15, 30, 50, 60, 75, 100, 120, 150, 200 };
 // Constants //
@@ -59,18 +62,16 @@ void initLights()
     return;
 
   clog << "Init lights" << endl;
-	glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular );
+	glMaterialfv( GL_FRONT, GL_SPECULAR, soft_specular );
 	glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess );
 	glMaterialfv( GL_FRONT, GL_DIFFUSE , white_light );
 	if (args.falseColors || args.imageColors) {
 		clog << "Enable color material" << endl;
 		glEnable( GL_COLOR_MATERIAL );
-		//glColorMaterial( GL_FRONT_AND_BACK, GL_DIFFUSE );
-		//glColorMaterial( GL_FRONT_AND_BACK, GL_SPECULAR );
 	}
 	glLightfv( GL_LIGHT0, GL_POSITION, light_position );
-	glLightfv( GL_LIGHT0, GL_DIFFUSE , white_light );
-	glLightfv( GL_LIGHT0, GL_SPECULAR, white_light );
+	glLightfv( GL_LIGHT0, GL_DIFFUSE , light_gray );
+	glLightfv( GL_LIGHT0, GL_SPECULAR, pale_blue_light );
 	glEnable( GL_LIGHTING );
 	glEnable( GL_LIGHT0 );
 }
@@ -92,12 +93,6 @@ void initFunc()
 	if (args.drawMode == GL_LINE || args.drawMode == GL_POINT)
 		bgColor = BLACK;
 	glClearColor( bgColor.r(), bgColor.g(), bgColor.b(), bgColor.a() );
-
-	//glMatrixMode( GL_MODELVIEW );
-	//glLoadIdentity();
-	//xoffset = (surfaces[0]->xMin()+surfaces[0]->xMax()) / -2.0; == -Ox
-	//yoffset = (surfaces[0]->yMin()+surfaces[0]->yMax()) / -2.0; == -Oy
-	//cerr<<"move [x,y,z]="<<"["<<xoffset<<","<<yoffset<<",0]"<<endl;
 
 	glEnable( GL_DEPTH_TEST );
 }
