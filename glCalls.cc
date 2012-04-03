@@ -75,9 +75,9 @@ void setProjection(int width, int height)
 
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
-	L = 1.3*Surface::getCurrentSurface()->Lmax();
+	L = Surface::getCurrentSurface()->Lmax();
   cameraZ = 2*L;
-  gluPerspective(60.0, (float)width/(float)height, cameraZ-L, cameraZ+L);
+  gluPerspective(60.0, (float)width/(float)height, L/10, cameraZ+10*L);
 	glMatrixMode( GL_MODELVIEW );
 }
 
@@ -243,8 +243,6 @@ void specialKeysFunc(int key, int x, int y)
 
 void keyboardFunc( unsigned char key, int x, int y )
 {
-  static float zoom = 1.0F;
-
 	switch (key) {
 		case '4':
 			spiny-=5;
@@ -329,13 +327,11 @@ void keyboardFunc( unsigned char key, int x, int y )
       }
 			break;
     case 'z':
-      //TODO
-      zoom *= 0.8F;
+      cameraZ *= 0.9F;
       glutPostRedisplay();
       break;
     case 'x':
-      //TODO
-      zoom *= 1.2F;
+      cameraZ *= 1.1F;
       glutPostRedisplay();
       break;
 		case 'q':
