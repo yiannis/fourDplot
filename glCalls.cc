@@ -329,6 +329,7 @@ void keyboardFunc( unsigned char key, int x, int y )
       glutPostRedisplay();
 			break;
 		case 'v': //Toggle video on/off
+		case ' ':
 			if (videoOn) {
 				clog << "Turning video off" << endl;
 				videoOn = false;
