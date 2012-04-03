@@ -249,7 +249,6 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
       s_surfaceCache = vector<Surface*>(s_surfaceCacheSize);
 
       for (int i = 0; i<s_surfaceCacheSize; i++) {
-        clog << "Create surface from image " << SurfaceImage::s_files[i] << "\n";
         SurfaceImage::create( i, i );
       }
       break;
@@ -281,7 +280,6 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
 
       for (int i=0; i<s_surfaceCacheSize; i++) {
         SurfaceFunction::create( i, i ); 
-        clog << "Create surface from input function\n";
       }
       break;
   }
@@ -433,8 +431,6 @@ int Surface::s_currentFrameIndex,
 //////// SurfaceImage { //////// 
 SurfaceImage::SurfaceImage( const string& file, float ratio )
 {
-	clog << "Surface(" << file << "," << ratio << ")" << endl;
-
   m_image = new Magick::Image();
 	m_image->read( file );
 	if (ratio != 1.0) //FIXME
@@ -532,6 +528,10 @@ void SurfaceImage::create(int cacheIndex, int fileIndex)
   if (s_lights)
     surface->createNormals();
 
+  clog <<"Create image("<<s_files[fileIndex]<<") surface: "
+       <<surface->Lx()<<"x"<<surface->Ly()<<"x"<<surface->Lz()
+       <<"@["<<surface->Ox()<<","<<surface->Oy()<<","<<surface->Oz()<<"]\n";
+
   s_surfaceCache[cacheIndex] = surface;
 }
 
@@ -606,6 +606,10 @@ void SurfaceFunction::create(int cacheIndex, int timeIndex)
     surface->createFalseColors( s_colors );
   if (s_lights)
     surface->createNormals();
+
+  clog << "Create function surface: "
+       <<surface->Lx()<<"x"<<surface->Ly()<<"x"<<surface->Lz()
+       <<"@["<<surface->Ox()<<","<<surface->Oy()<<","<<surface->Oz()<<"]\n";
 
   s_surfaceCache[cacheIndex] = surface;
 }
