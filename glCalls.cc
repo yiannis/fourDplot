@@ -120,6 +120,7 @@ void displayFunc()
                  light_position[2]*L);
 		glEnd();
 	}
+	glLightfv( GL_LIGHT0, GL_POSITION, light_position );
 
   // 2. Draw x-y-z axes
 	glRotatef( spinx, 1.0, 0.0, 0.0 );
