@@ -83,7 +83,7 @@ void setProjection(int width, int height)
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	L = Surface::getCurrentSurface()->Lmax();
-  cameraZ = 2*L;
+  cameraZ = 1.5*L;
   gluPerspective(60.0, (float)width/(float)height, L/10, cameraZ+10*L);
 	glMatrixMode( GL_MODELVIEW );
 }
@@ -367,7 +367,6 @@ void keyboardFunc( unsigned char key, int x, int y )
 			break;
 		default:
 			cerr<<"Unknown key!"<<endl;
-			int err=system( "cat menu.txt" );
 			break;
 	}
 }

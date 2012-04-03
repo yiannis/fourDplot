@@ -27,8 +27,7 @@ class Arguments {
 
     Mode mode;
     int points, drawMode, duration;
-    float multiply, resample;
-    float xmin, xmax, ymin, ymax;
+    float xmin, xmax, ymin, ymax, resample;
     bool lights, axis, falseColors, imageColors;
     bool renderVideo, verbose, loop, help;
     std::string drawModeStr, saveDir, functionCode;
