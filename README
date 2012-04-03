@@ -1,0 +1,98 @@
+Depends on packages (on *buntu):
+libmagick++-dev, libboost-program-options-dev, freeglut3-dev, freeglut3-dev.
+
+You also need to have the math expression parser installed in the parent directory.
+Download it from github first.
+
+
+Installation:
+$ cmake .
+$ make
+$ cp plot4D /whatever/dir/you/like
+
+
+Usage:
+$ ./plot4D --help
+
+plot4D has 2 main modes of operation.
+Creating 3D surfaces from a user specified function, or from an image.
+In order to justify the '4' in its name, this program also supports some (limited)
+video capabilities in both modes.
+
+Function mode:
+  Functions of the x,y independent variables are supported, that create open
+  surfaces, like f(x,y)=2*x+3/y+5*x*y. Most usual C functions and constants
+  are also supported, eg: f(x,y)=sin((pi/4)*x)+sqrt(x^2+y^2).
+  When the video mode is enabled, the functions can also have the 't' variable,
+  so you can change any function property with time.
+
+Image mode:
+  You can open any image supported by ImageMagick and it will be converted to
+  a 3D surface. The surface height is the image intensity at that point.
+  It is usefull to scale down large images using the -r option.
+  When loading many images, you can use the video mode to see a video of
+  their respective 3D surfaces.
+
+A slight warning: In video mode, all frames are rendered in memmory first.
+If your RAM is not enough for the whole video to load, you can ommit the
+--video option, and you can still navigate between the frames with
+the n[ext] and p[revious] keys.
+While the video is playing you can use the mouse/keyboard to control
+the rotation, zoom, etc.
+
+
+
+Examples:
+$ plot4D -d line -f "sin(x*y)/(x*y)" -p 3000 -l -a --false-colors
+
+$ plot4D -d fill -f "sin(x+y^2)" -p 5000 -l --xmin -4 --xmax 3 --ymin -2.2 --ymax 2.4 --false-colors -a
+
+$ plot4D -d fill -p 7000 -a --false-colors --lights -f "2*sin((x^2+y^2)*cos(2*pi/300*t))/(x^2+y^2)" --video --duration 10 --loop
+
+$ plot4D -d point -p 5000 -f "0.4*sin(x+y)/(x^2+y^2)" --xmin -2 --xmax 2 --ymin -2 --ymax 2
+
+$ plot4D -d point -p 2000 -f "0.4*cos((2*pi/150)*t)*sin(x+y)/(x^2+y^2)" --xmin -2 --xmax 2 --ymin -2 --ymax 2 --video --duration 5 --loop
+
+$ plot4D penguin-flat.png -d point -r 0.4 --false-color --lights
+
+
+
+Control Keys:
+  You can control the application with the keyboard and mouse.
+  The surfaces can be fully rotated/zoomed in-out. Also, you can control
+  the video playback with start/stop, next/previous frame, etc.
+
+  MOUSE:
+    Right click:
+      Rotates around the local z axis of the 3D surface - clockwise.
+    Left click:
+      Rotates around the local z axis of the 3D surface - counterclockwise.
+    Middle click and drag rotates the 3D surface around the X-Y axes.
+  
+  KEYBOARD:
+    Up/Down/Left/Right Arrow: Rotates the 3D surface around the X-Y axes.
+    F11: full screen
+    'h': home position
+    'v' or <space>: Toggle video on/off
+    'b': Go to first frame
+    'f': Doubles the rotation speed
+    's': Halfs the rotation speed
+    'n': Next frame
+    'p': Previous frame
+    'a': Save all frames
+    'd': Save Current frame
+    '+': Increase the FPS
+    '-': Decrease the FPS
+    'z': Zoom in
+    'x': Zoom out 
+    'q': quit
+
+
+--
+Copyright 2007, 2012 Yiannis Belias
+Use under the GPLv3 or later, see COPYING. 
+--
+Yiannis Belias  <yiannisbe@gmail.com>              `
+Homepage [http://users.hol.gr/~jonnyb/video] '              .
+GNU+LINUX:                                            '           '
+In a world without fences who needs Gates?      .                     *
