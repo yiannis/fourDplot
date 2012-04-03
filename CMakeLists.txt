@@ -4,12 +4,17 @@ PROJECT( fourDplot )
 
 SET( CMAKE_BUILD_TYPE "RelWithDebInfo" )
 
+FIND_PATH( PARSER_SOURCE_DIR
+           NAMES Expr.cc Function.cc Token.cc Lexer.cc Parser.cc
+           PATHS "../calculator/" "../" "/usr/local/src/"
+           DOC "Parser source directory" )
+MESSAGE( "-- Parser found: ${PARSER_SOURCE_DIR}" )
 SET( PARSER_SOURCES
-  "../calculator/Expr.cc"
-  "../calculator/Function.cc"
-  "../calculator/Token.cc"
-  "../calculator/Lexer.cc"
-  "../calculator/Parser.cc" )
+  "${PARSER_SOURCE_DIR}/Expr.cc"
+  "${PARSER_SOURCE_DIR}/Function.cc"
+  "${PARSER_SOURCE_DIR}/Token.cc"
+  "${PARSER_SOURCE_DIR}/Lexer.cc"
+  "${PARSER_SOURCE_DIR}/Parser.cc" )
 
 FIND_PACKAGE( Boost       REQUIRED COMPONENTS program_options )
 FIND_PACKAGE( ImageMagick REQUIRED COMPONENTS Magick++ )
