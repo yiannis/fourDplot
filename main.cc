@@ -12,7 +12,13 @@ Arguments args;
 
 int main(int argc, char** argv)
 {
-  args.parse(argc, argv);
+  try {
+    args.parse(argc, argv);
+  } catch (std::exception &e) {
+    std::cerr << argv[0] << ": " << e.what() << "\n\n";
+    args.printHelp();
+    return 1;
+  }
 
   if (args.help) {
     args.printHelp();
