@@ -29,10 +29,14 @@ extern const unsigned int FPS[] = { 1, 5, 10, 15, 30, 50, 60, 75, 100, 120, 150,
 
 
 // Globals (sorry, but this is just a glut demo!)
-int fpsIndex = 3; ///< Default is 30fps
+int fpsIndex = 4; ///< Default is 30fps
 int fpsValues = (sizeof FPS)/sizeof(unsigned int);
 
-static float spinz = -45, spinx = -35, spiny = 0, spin_step = 1, spin_dir = 0;
+static float spinz = -45,
+             spinx = -35,
+             spiny = 0,
+             spinV = 3.0F/100.0F, ///< Rotational velocity in deg/ms
+             spin_dir = 0;
 static Color bgColor = LIGHT_BLUE; ///< The background color
 static int win_width,  ///< The current window width
            win_height; ///< The current window height
@@ -192,7 +196,7 @@ void spinTimer(int value)
   if (!spinning)
     return;
 
-	spinz += spin_dir*spin_step;
+	spinz += spin_dir*spinV*videoDelay;
   glutPostRedisplay();
   glutTimerFunc(videoDelay, spinTimer, 0);
 }
@@ -261,11 +265,11 @@ void keyboardFunc( unsigned char key, int x, int y )
 			glutPostRedisplay();
 			break;
 		case '9':
-			spinz+=spin_step;
+      spinz += spinV*videoDelay;
 			glutPostRedisplay();
 			break;
 		case '7':
-			spinz-=spin_step;
+      spinz -= spinV*videoDelay;
 			glutPostRedisplay();
 			break;
 		case 'h': // Go to home position
@@ -287,11 +291,11 @@ void keyboardFunc( unsigned char key, int x, int y )
 			dumpFrame( "", args.saveDir );
 			break;
 		case 'f':
-			spin_step *= 2;
+			spinV *= 2;
 			glutPostRedisplay();
 			break;
 		case 's':
-			spin_step /= 2;
+			spinV /= 2;
 			glutPostRedisplay();
 			break;
 		case 'n': //render next image
