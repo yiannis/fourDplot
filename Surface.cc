@@ -227,6 +227,7 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
   s_falseColors = argv.falseColors;
   s_lights = argv.lights;
   s_loop = argv.loop;
+  s_log = argv.verbose;
   s_currentSurfaceIndex = 0;
   s_currentFrameIndex = 0;
 
@@ -332,7 +333,8 @@ bool Surface::next()
     // Create new Surface
     Surface::create( 0, s_currentFrameIndex ); 
   }
-  clog << "Surface::next(): Frame[" << s_currentFrameIndex << "]: of '"<<s_NRframes<<"' ready." << endl;
+  if (s_log)
+    clog << "Surface::next(): Frame[" << s_currentFrameIndex << "]: of '"<<s_NRframes<<"' ready." << endl;
 
   return true;
 }
@@ -371,7 +373,8 @@ bool Surface::previous()
     // Create new Surface
     Surface::create( 0, s_currentFrameIndex ); 
   }
-  clog << "Surface::previous(): Frame[" << s_currentFrameIndex << "]: of '"<<s_NRframes<<"' ready." << endl;
+  if (s_log)
+    clog << "Surface::previous(): Frame[" << s_currentFrameIndex << "]: of '"<<s_NRframes<<"' ready." << endl;
 
   return true;
 }
@@ -413,7 +416,7 @@ void Surface::create(int cacheIndex, int frameIndex)
 
 // protected static data
 vector<Surface::glIndices> Surface::s_glIndicesCache;
-bool Surface::s_falseColors, Surface::s_lights;
+bool Surface::s_falseColors, Surface::s_lights, Surface::s_log;
 std::vector<Color> Surface::s_colors;
 std::vector<Surface*> Surface::s_surfaceCache;
 
@@ -528,9 +531,10 @@ void SurfaceImage::create(int cacheIndex, int fileIndex)
   if (s_lights)
     surface->createNormals();
 
-  clog <<"Create image("<<s_files[fileIndex]<<") surface: "
-       <<surface->Lx()<<"x"<<surface->Ly()<<"x"<<surface->Lz()
-       <<"@["<<surface->Ox()<<","<<surface->Oy()<<","<<surface->Oz()<<"]\n";
+  if (s_log)
+    clog <<"Create image("<<s_files[fileIndex]<<") surface: "
+         <<surface->Lx()<<"x"<<surface->Ly()<<"x"<<surface->Lz()
+         <<"@["<<surface->Ox()<<","<<surface->Oy()<<","<<surface->Oz()<<"]\n";
 
   s_surfaceCache[cacheIndex] = surface;
 }
@@ -565,7 +569,8 @@ void SurfaceFunction::createVertices()
 {
   Executor& func = *m_func;
 
-  clog << "createVertices(): Create vertices for t=" << func.t() << endl;
+  if (s_log)
+    clog << "createVertices(): Create vertices for t=" << func.t() << endl;
 	if (m_vertices == NULL)
 		m_vertices = new float[3*m_points];
 
@@ -607,9 +612,10 @@ void SurfaceFunction::create(int cacheIndex, int timeIndex)
   if (s_lights)
     surface->createNormals();
 
-  clog << "Create function surface: "
-       <<surface->Lx()<<"x"<<surface->Ly()<<"x"<<surface->Lz()
-       <<"@["<<surface->Ox()<<","<<surface->Oy()<<","<<surface->Oz()<<"]\n";
+  if (s_log)
+    clog << "Create function surface: "
+         <<surface->Lx()<<"x"<<surface->Ly()<<"x"<<surface->Lz()
+         <<"@["<<surface->Ox()<<","<<surface->Oy()<<","<<surface->Oz()<<"]\n";
 
   s_surfaceCache[cacheIndex] = surface;
 }

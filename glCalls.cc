@@ -180,7 +180,7 @@ void videoTimer(int value)
     return;
 
   if (Surface::next()) {
-    clog << "videoTimer(): Play next frame" << endl;
+    if (args.verbose) clog << "videoTimer(): Play next frame" << endl;
     glutPostRedisplay();
     glutTimerFunc(videoDelay, videoTimer, 0); // next videoTimer call milliseconds later
   } else {

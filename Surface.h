@@ -83,7 +83,7 @@ class Surface {
     static const Surface* getCurrentSurface();
 
   protected:
-    static bool s_falseColors, s_lights;
+    static bool s_falseColors, s_lights, s_log;
     static std::vector<Color> s_colors; ///< The false color scale
 		static std::vector<Surface*> s_surfaceCache; ///< Static cache of surfaces
 
