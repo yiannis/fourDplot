@@ -35,6 +35,7 @@ int main(int argc, char** argv)
     glutKeyboardFunc( keyboardFunc );
     glutSpecialFunc( specialKeysFunc );
     glutDisplayFunc( displayFunc );
+    glutReshapeFunc( setProjection );
     glutMainLoop();
   } catch (std::exception &e) {
     std::cerr << argv[0] << ": " << e.what() << "\n";

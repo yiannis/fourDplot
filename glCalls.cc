@@ -69,14 +69,15 @@ void initLights()
 	glEnable( GL_LIGHT0 );
 }
 
-void setProjection( float mult )
+void setProjection(int width, int height)
 {
-  //TODO glViewport()
+  glViewport(0,0, width,height);
+
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
-	L = Surface::getCurrentSurface()->Lmax(); L *= mult;
+	L = 1.3*Surface::getCurrentSurface()->Lmax();
   cameraZ = 2*L;
-  gluPerspective(60.0, 1.0, cameraZ-L, cameraZ+L);
+  gluPerspective(60.0, (float)width/(float)height, cameraZ-L, cameraZ+L);
 	glMatrixMode( GL_MODELVIEW );
 }
 
@@ -85,8 +86,6 @@ void initFunc()
 	if (args.drawMode == GL_LINE || args.drawMode == GL_POINT)
 		bgColor = BLACK;
 	glClearColor( bgColor.r(), bgColor.g(), bgColor.b(), bgColor.a() );
-
-  setProjection(1.0F);
 
 	//glMatrixMode( GL_MODELVIEW );
 	//glLoadIdentity();
