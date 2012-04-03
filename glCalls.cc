@@ -43,6 +43,7 @@ static float L,   ///<
              Oy,  ///<
              Oz;  ///<
 static unsigned int videoDelay = 1000 / FPS[fpsIndex]; ///< in milliseconds
+static float cameraZ = 20;
 // Globals //
 
 
@@ -70,13 +71,12 @@ void initLights()
 
 void setProjection( float mult )
 {
+  //TODO glViewport()
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	L = Surface::getCurrentSurface()->Lmax(); L *= mult;
-  Ox = Surface::getCurrentSurface()->Ox();
-  Oy = Surface::getCurrentSurface()->Oy();
-  Oz = Surface::getCurrentSurface()->Oz();
-	glOrtho( Ox-L, Ox+L, Oy-L, Oy+L, Oz-L, Oz+L );
+  cameraZ = 2*L;
+  gluPerspective(60.0, 1.0, cameraZ-L, cameraZ+L);
 	glMatrixMode( GL_MODELVIEW );
 }
 
@@ -88,9 +88,8 @@ void initFunc()
 
   setProjection(1.0F);
 
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity();
-	//gluLookAt( 5, 5, 5, 0, 0, 0, -125, -125, 250 );
+	//glMatrixMode( GL_MODELVIEW );
+	//glLoadIdentity();
 	//xoffset = (surfaces[0]->xMin()+surfaces[0]->xMax()) / -2.0; == -Ox
 	//yoffset = (surfaces[0]->yMin()+surfaces[0]->yMax()) / -2.0; == -Oy
 	//cerr<<"move [x,y,z]="<<"["<<xoffset<<","<<yoffset<<",0]"<<endl;
@@ -101,40 +100,51 @@ void initFunc()
 void displayFunc()
 {
 	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+	glLoadIdentity();
 
-	glPushMatrix();
-		if (args.axis) {
-			glBegin(GL_LINES);
-				//Draw light path
-				glColor3fv( WHITE() );
-				glVertex3f(0,0,0);
-				glVertex3f(light_position[0]*L,
-                   light_position[1]*L,
-                   light_position[2]*L);
-			glEnd();
-		}
-		glRotatef( spinx, 1.0, 0.0, 0.0 );
-		glRotatef( spiny, 0.0, 1.0, 0.0 );
-		glRotatef( spinz, 0.0, 0.0, 1.0 );
+  //// Viewing transformation ////
+	gluLookAt( 0, 0, cameraZ, 0, 0, 0, 0, 1, 0 );
 
-		if (args.axis) {
-			glBegin(GL_LINES);
-				//Draw xyz axis
-				glColor3fv( RED() );
-				glVertex3f(0,0,0); //x-axis
-				glVertex3f(Ox+L,0,0);
-				glColor3fv( GREEN() );
-				glVertex3f(0,0,0); //y-axis
-				glVertex3f(0,Oy+L,0);
-				glColor3fv( BLUE() );
-				glVertex3f(0,0,0); //z-axis
-				glVertex3f(0,0,Oz+L);
-			glEnd();
-		}
-		glTranslatef( -Ox, -Oy, -Oz );
-		glColor3fv( GREEN() );
-    Surface::drawCurrent();
-	glPopMatrix();
+  //// Modeling transformations ////
+  // 1. Draw line towards Light
+	if (args.axis) {
+		glBegin(GL_LINES);
+			//Draw light path
+			glColor3fv( WHITE() );
+			glVertex3f(0,0,0);
+			glVertex3f(light_position[0]*L,
+                 light_position[1]*L,
+                 light_position[2]*L);
+		glEnd();
+	}
+
+  // 2. Draw x-y-z axes
+	glRotatef( spinx, 1.0, 0.0, 0.0 );
+	glRotatef( spiny, 0.0, 1.0, 0.0 );
+	glRotatef( spinz, 0.0, 0.0, 1.0 );
+
+	if (args.axis) {
+		glBegin(GL_LINES);
+			//Draw xyz axis
+			glColor3fv( RED() );
+			glVertex3f(0,0,0); //x-axis
+			glVertex3f(Ox+L,0,0);
+			glColor3fv( GREEN() );
+			glVertex3f(0,0,0); //y-axis
+			glVertex3f(0,Oy+L,0);
+			glColor3fv( BLUE() );
+			glVertex3f(0,0,0); //z-axis
+			glVertex3f(0,0,Oz+L);
+		glEnd();
+	}
+
+  // 3. Draw surface
+  Ox = Surface::getCurrentSurface()->Ox();
+  Oy = Surface::getCurrentSurface()->Oy();
+  Oz = Surface::getCurrentSurface()->Oz();
+	glTranslatef( -Ox, -Oy, -Oz );
+	glColor3fv( GREEN() );
+  Surface::drawCurrent();
 
 	glFlush();
 	glutSwapBuffers();
