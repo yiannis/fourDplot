@@ -4,11 +4,18 @@ PROJECT( fourDplot )
 
 SET( CMAKE_BUILD_TYPE "RelWithDebInfo" )
 
+## Find the Parser files ##
 FIND_PATH( PARSER_SOURCE_DIR
            NAMES Expr.cc Function.cc Token.cc Lexer.cc Parser.cc
            PATHS "../calculator/" "../" "/usr/local/src/"
            DOC "Parser source directory" )
-MESSAGE( "-- Parser found: ${PARSER_SOURCE_DIR}" )
+
+if(PARSER_SOURCE_DIR)
+  MESSAGE( "-- Parser found: ${PARSER_SOURCE_DIR}" )
+else(PARSER_SOURCE_DIR)
+    MESSAGE(FATAL_ERROR "Parser NOT found. Please see the README file." )
+endif(PARSER_SOURCE_DIR)
+
 SET( PARSER_SOURCES
   "${PARSER_SOURCE_DIR}/Expr.cc"
   "${PARSER_SOURCE_DIR}/Function.cc"
