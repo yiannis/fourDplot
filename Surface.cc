@@ -266,7 +266,6 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
       SurfaceFunction::s_code["x"] = 0;
       SurfaceFunction::s_code["y"] = 0;
       SurfaceFunction::s_code["t"] = 0;
-      SurfaceFunction::s_code.parse();
 
       // Set the total number of frames allowed
       s_NRframes = (argv.duration == 0) ? 1 : FPS * argv.duration;
