@@ -1,9 +1,13 @@
 Depends on packages (on *buntu):
 libmagick++-dev, libboost-program-options-dev, freeglut3-dev, freeglut3-dev.
 
-You also need to have the math expression parser installed in the parent directory.
+You also need to have the math expression parser project, installed in the same directory.
 Download it from github first.
-
+E.g.:
+$ git clone git://github.com/yiannis/calculator.git
+$ git clone git://github.com/yiannis/fourDplot.git
+$ cd fourDplot
+(You do not need to build calculator first.)
 
 Installation:
 $ cmake .
