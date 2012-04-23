@@ -260,18 +260,13 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
       SurfaceFunction::s_ymax = argv.ymax;
       SurfaceFunction::s_points = argv.points;
 
-      // Parse the input function code and set the SurfaceFunction::Executor
-      istringstream input(argv.functionCode);
-      Lexer lexer(input,
-                  SurfaceFunction::s_code.x_p(),
-                  SurfaceFunction::s_code.y_p(),
-                  SurfaceFunction::s_code.t_p());
-      Parser parser(lexer.getTokens());
+      // Parse the input function code and set the SurfaceFunction::Interpreter
+      SurfaceFunction::s_input.str(argv.functionCode);
 
-      SurfaceFunction::s_code.setAST( parser.getAST() );
-      SurfaceFunction::s_code.x() = 0;
-      SurfaceFunction::s_code.y() = 0;
-      SurfaceFunction::s_code.t() = 0;
+      SurfaceFunction::s_code["x"] = 0;
+      SurfaceFunction::s_code["y"] = 0;
+      SurfaceFunction::s_code["t"] = 0;
+      SurfaceFunction::s_code.parse();
 
       // Set the total number of frames allowed
       s_NRframes = (argv.duration == 0) ? 1 : FPS * argv.duration;
@@ -548,7 +543,7 @@ std::vector<std::string> SurfaceImage::s_files;
 //////// SurfaceFunction { //////// 
 SurfaceFunction::SurfaceFunction( float xmin, float xmax,
                                   float ymin, float ymax,
-                                  int points, Executor *code ):
+                                  int points, Interpreter *code ):
   Surface( xmin, xmax, ymin, ymax, points ),
   m_func(code)
 {
@@ -567,17 +562,17 @@ SurfaceFunction::~SurfaceFunction()
 #include <cfloat>
 void SurfaceFunction::createVertices()
 {
-  Executor& func = *m_func;
+  Interpreter& func = *m_func;
 
   if (s_log)
-    clog << "createVertices(): Create vertices for t=" << func.t() << endl;
+    clog << "createVertices(): Create vertices for t=" << func["t"] << endl;
 	if (m_vertices == NULL)
 		m_vertices = new float[3*m_points];
 
 	ArrayPoint3D<float> V( m_vertices, m_xPoints, m_yPoints, 3 );
 
-  func.x() = 0.0F;
-  func.y() = 0.0F;
+  func["x"] = 0.0F;
+  func["y"] = 0.0F;
 	m_zMin = FLT_MAX;
   m_zMax = FLT_MIN;
 
@@ -586,10 +581,10 @@ void SurfaceFunction::createVertices()
 	float ystep = (m_yMax-m_yMin)/(m_yPoints-1);
 	for (int j=0; j<m_xPoints; j++)
 		for (int i=0; i<m_yPoints; i++) {
-				V.x(i,j) = func.x() = m_xMin+j*xstep;
-				V.y(i,j) = func.y() = m_yMin+i*ystep;
+				V.x(i,j) = func["x"] = m_xMin+j*xstep;
+				V.y(i,j) = func["y"] = m_yMin+i*ystep;
 
-				V.z(i,j) = z = func.run();
+				V.z(i,j) = z = func.result();
         if (isnan(z) || isinf(z)) {
           V.z(i,j) = 0.0F; //TODO V.z(i,j) = avgFromLocalArea(V,i,j);
           continue;
@@ -603,7 +598,7 @@ void SurfaceFunction::createVertices()
 // Static methods
 void SurfaceFunction::create(int cacheIndex, int timeIndex)
 {
-  s_code.t() = timeIndex;
+  s_code["t"] = timeIndex;
 
   Surface* surface = new SurfaceFunction( s_xmin, s_xmax, s_ymin, s_ymax, s_points, &s_code );
 
@@ -622,7 +617,8 @@ void SurfaceFunction::create(int cacheIndex, int timeIndex)
 
 // public static data
 int SurfaceFunction::s_points;
-Executor SurfaceFunction::s_code;
+istringstream SurfaceFunction::s_input;
+Interpreter SurfaceFunction::s_code(&s_input);
 float SurfaceFunction::s_xmin,
       SurfaceFunction::s_xmax,
       SurfaceFunction::s_ymin,

@@ -10,7 +10,7 @@
 #include <GL/glut.h>
 #include <Magick++.h>
 
-#include "Executor.h"
+#include "Interpreter.h"
 
 #include "Arguments.h"
 #include "Color.h"
@@ -138,16 +138,17 @@ class SurfaceImage : public Surface {
 /// SurfaceFunction
 class SurfaceFunction : public Surface {
   private:
-    Executor *m_func; ///< This pointer in not owned by the SurfaceFunction class
+    Interpreter *m_func; ///< This pointer in not owned by the SurfaceFunction class
 
 	public:
-    SurfaceFunction( float xmin, float xmax, float ymin, float ymax, int points, Executor *code );
+    SurfaceFunction( float xmin, float xmax, float ymin, float ymax, int points, Interpreter *code );
 		~SurfaceFunction();
 
     static void create(int cacheIndex, int timeIndex);
 
     static int s_points;
-    static Executor s_code; ///< The parsed function used to describe the 3D surface
+    static std::istringstream s_input; ///< The input stream holding the function source code
+    static Interpreter s_code; ///< The parsed function used to describe the 3D surface
     static float s_xmin, s_xmax, s_ymin, s_ymax;
 
   protected:

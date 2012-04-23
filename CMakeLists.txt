@@ -21,6 +21,7 @@ SET( PARSER_SOURCES
   "${PARSER_SOURCE_DIR}/Function.cc"
   "${PARSER_SOURCE_DIR}/Token.cc"
   "${PARSER_SOURCE_DIR}/Lexer.cc"
+  "${PARSER_SOURCE_DIR}/Visitor.cc"
   "${PARSER_SOURCE_DIR}/Parser.cc" )
 
 FIND_PACKAGE( Boost       REQUIRED COMPONENTS program_options )
