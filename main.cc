@@ -27,7 +27,6 @@ int main(int argc, char** argv)
     args.printAllValues();
   }
 
-  Surface::initSurfaceCache( args, FPS[fpsIndex] );
 
   glutInit( &argc, argv );
   glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
@@ -35,6 +34,8 @@ int main(int argc, char** argv)
   glutCreateWindow( argv[0] );
 
   try {
+    Surface::initSurfaceCache( args, FPS[fpsIndex] );
+
     initLights();
     initFunc();
     glutMouseFunc( mouseFuncTimer );
