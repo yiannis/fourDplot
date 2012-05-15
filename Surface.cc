@@ -190,7 +190,7 @@ void Surface::createIndices( int xPoints, int yPoints, GLuint* &indices )
 	aux.indices = new GLuint[size];
 	indices = aux.indices;
 
-  std::clog << "Creating new indices array of [" << size << "]" << std::endl;
+  //std::clog << "Creating new indices array of [" << size << "]" << std::endl;
 
 	aux.indices[0] = 0;
 	for (int i=1; i<size; i+=2 ) {
@@ -250,8 +250,11 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
       s_surfaceCache = vector<Surface*>(s_surfaceCacheSize);
 
       for (int i = 0; i<s_surfaceCacheSize; i++) {
+        clog << "Create surface [" << i << "/" << s_surfaceCacheSize << "]" << flush;
         SurfaceImage::create( i, i );
+        clog << "\r" << flush;
       }
+      clog << endl;
       break;
     case PLOT:
       SurfaceFunction::s_xmin = argv.xmin;
@@ -260,12 +263,14 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
       SurfaceFunction::s_ymax = argv.ymax;
       SurfaceFunction::s_points = argv.points;
 
-      // Parse the input function code and set the SurfaceFunction::Interpreter
-      SurfaceFunction::s_input.str(argv.functionCode);
+      // Parse the input function code and set the SurfaceFunction::Compiler
+      SurfaceFunction::s_input = new istringstream(argv.functionCode);
 
-      SurfaceFunction::s_code["x"] = 0;
-      SurfaceFunction::s_code["y"] = 0;
-      SurfaceFunction::s_code["t"] = 0;
+      SurfaceFunction::s_code = new Compiler(SurfaceFunction::s_input);
+      SurfaceFunction::s_code->set( "x", 0.0F );
+      SurfaceFunction::s_code->set( "y", 0.0F );
+      SurfaceFunction::s_code->set( "t", 0.0F );
+      SurfaceFunction::s_code->compile();
 
       // Set the total number of frames allowed
       s_NRframes = (argv.duration == 0) ? 1 : FPS * argv.duration;
@@ -274,8 +279,11 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
       s_surfaceCache = vector<Surface*>(s_surfaceCacheSize);
 
       for (int i=0; i<s_surfaceCacheSize; i++) {
+        clog << "Create surface [" << i << "/" << s_surfaceCacheSize << "]" << flush;
         SurfaceFunction::create( i, i ); 
+        clog << "\r" << flush;
       }
+      clog << endl;
       break;
   }
 }
@@ -542,7 +550,7 @@ std::vector<std::string> SurfaceImage::s_files;
 //////// SurfaceFunction { //////// 
 SurfaceFunction::SurfaceFunction( float xmin, float xmax,
                                   float ymin, float ymax,
-                                  int points, Interpreter *code ):
+                                  int points, Compiler *code ):
   Surface( xmin, xmax, ymin, ymax, points ),
   m_func(code)
 {
@@ -561,17 +569,15 @@ SurfaceFunction::~SurfaceFunction()
 #include <cfloat>
 void SurfaceFunction::createVertices()
 {
-  Interpreter& func = *m_func;
-
   if (s_log)
-    clog << "createVertices(): Create vertices for t=" << func["t"] << endl;
+    clog << "createVertices(): Create vertices for t=" << m_func->get("t") << endl;
 	if (m_vertices == NULL)
 		m_vertices = new float[3*m_points];
 
 	ArrayPoint3D<float> V( m_vertices, m_xPoints, m_yPoints, 3 );
 
-  func["x"] = 0.0F;
-  func["y"] = 0.0F;
+  m_func->set( "x", 0.0F );
+  m_func->set( "y", 0.0F );
 	m_zMin = FLT_MAX;
   m_zMax = FLT_MIN;
 
@@ -580,10 +586,10 @@ void SurfaceFunction::createVertices()
 	float ystep = (m_yMax-m_yMin)/(m_yPoints-1);
 	for (int j=0; j<m_xPoints; j++)
 		for (int i=0; i<m_yPoints; i++) {
-				V.x(i,j) = func["x"] = m_xMin+j*xstep;
-				V.y(i,j) = func["y"] = m_yMin+i*ystep;
+				V.x(i,j) = m_func->set( "x", m_xMin+j*xstep );
+				V.y(i,j) = m_func->set( "y", m_yMin+i*ystep );
 
-				V.z(i,j) = z = func.result();
+				V.z(i,j) = z = m_func->result();
         if (isnan(z) || isinf(z)) {
           V.z(i,j) = 0.0F; //TODO V.z(i,j) = avgFromLocalArea(V,i,j);
           continue;
@@ -597,9 +603,9 @@ void SurfaceFunction::createVertices()
 // Static methods
 void SurfaceFunction::create(int cacheIndex, int timeIndex)
 {
-  s_code["t"] = timeIndex;
+  s_code->set( "t", timeIndex );
 
-  Surface* surface = new SurfaceFunction( s_xmin, s_xmax, s_ymin, s_ymax, s_points, &s_code );
+  Surface* surface = new SurfaceFunction( s_xmin, s_xmax, s_ymin, s_ymax, s_points, s_code );
 
   if (Surface::s_falseColors)
     surface->createFalseColors( s_colors );
@@ -616,8 +622,8 @@ void SurfaceFunction::create(int cacheIndex, int timeIndex)
 
 // public static data
 int SurfaceFunction::s_points;
-istringstream SurfaceFunction::s_input;
-Interpreter SurfaceFunction::s_code(&s_input);
+istringstream *SurfaceFunction::s_input;
+Compiler *SurfaceFunction::s_code;
 float SurfaceFunction::s_xmin,
       SurfaceFunction::s_xmax,
       SurfaceFunction::s_ymin,

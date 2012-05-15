@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <exception>
+#include <iostream>
 
 #include <GL/glut.h>
 
