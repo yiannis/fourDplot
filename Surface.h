@@ -118,6 +118,7 @@ class Surface {
 /// SurfaceImage
 class SurfaceImage : public Surface {
 	private:
+    // m_image is only valid during the constructor call
     Magick::Image* m_image; ///< A 3D surface will be created, representing this image
 
 	public:

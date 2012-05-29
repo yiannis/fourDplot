@@ -449,11 +449,13 @@ SurfaceImage::SurfaceImage( const string& file, float ratio )
   createVertices();
 
 	createIndices( m_xPoints, m_yPoints, m_indices );
+
+  delete m_image;
+  m_image = NULL;
 }
 
 SurfaceImage::~SurfaceImage()
 {
-  delete m_image;
 }
 
 /// Create the surface vertices from the image colors.
