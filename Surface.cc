@@ -243,6 +243,7 @@ void Surface::initSurfaceCache( const Arguments& argv, int FPS )
     case IMAGE:
       SurfaceImage::s_resample = argv.resample;
       SurfaceImage::s_files = argv.images;
+      SurfaceImage::s_texture = argv.textureImg;
       s_NRframes = SurfaceImage::s_files.size();
 
       // Set the cache size
@@ -434,10 +435,10 @@ int Surface::s_currentFrameIndex,
 
 
 //////// SurfaceImage { //////// 
-SurfaceImage::SurfaceImage( const string& file, float ratio )
+SurfaceImage::SurfaceImage( const string& imageFile, const string& textureFile, float ratio )
 {
   m_image = new Magick::Image();
-	m_image->read( file );
+	m_image->read( imageFile );
 	if (ratio != 1.0) //FIXME
 		m_image->scale( Magick::Geometry( ratio*m_image->columns(), ratio*m_image->rows()) );
 	m_image->flip();
@@ -445,8 +446,10 @@ SurfaceImage::SurfaceImage( const string& file, float ratio )
 	m_yPoints = m_image->rows();
 	m_points = m_xPoints*m_yPoints;
 
-  createImageColors(); // Needed for createVertices()
+  createImageColors( m_image ); // Needed for createVertices()
   createVertices();
+  if (textureFile != "")
+    createTexture(textureFile, ratio);
 
 	createIndices( m_xPoints, m_yPoints, m_indices );
 
@@ -509,14 +512,14 @@ void SurfaceImage::createVertices()
 }
 
 /// Get the image pixel colors and use them as the OpenGL vertex RGB colors.
-void SurfaceImage::createImageColors()
+void SurfaceImage::createImageColors(Magick::Image* image)
 {
   if (m_colors == NULL)
     m_colors = new float[3*m_points];
 
-	switch (m_image->colorSpace()) {
+	switch (image->colorSpace()) {
 		case Magick::RGBColorspace:
-			m_image->write( 0, 0, m_xPoints, m_yPoints, "RGB", Magick::FloatPixel, m_colors );
+			image->write( 0, 0, m_xPoints, m_yPoints, "RGB", Magick::FloatPixel, m_colors );
 			break;
 		case Magick::GRAYColorspace:
 			//temp.write( 0, 0, width, height, "R", Magick::FloatPixel, Data );
@@ -526,9 +529,31 @@ void SurfaceImage::createImageColors()
 	}
 }
 
+void SurfaceImage::createTexture( const string& textureFile, float ratio )
+{
+  Magick::Image* texture = new Magick::Image();
+	texture->read( textureFile );
+
+	if (texture->columns() != m_image->baseColumns() ||
+      texture->rows()    != m_image->baseRows()) {
+    clog << "Texture must have the same dimentions as display image. Ignoring texture '"
+         << textureFile << "'" << endl;
+    delete texture;
+
+    return;
+  }
+
+	if (ratio != 1.0) //FIXME
+		texture->scale( Magick::Geometry( ratio*texture->columns(), ratio*texture->rows()) );
+	texture->flip();
+
+  createImageColors( texture );
+  delete texture;
+}
+
 void SurfaceImage::create(int cacheIndex, int fileIndex)
 {
-  Surface* surface = new SurfaceImage( s_files[fileIndex], s_resample );
+  Surface* surface = new SurfaceImage( s_files[fileIndex], s_texture, s_resample );
 
   if (Surface::s_falseColors)
     surface->createFalseColors( s_colors );
@@ -544,6 +569,7 @@ void SurfaceImage::create(int cacheIndex, int fileIndex)
 }
 
 // public static data
+std::string SurfaceImage::s_texture; ///< The texture filename
 float SurfaceImage::s_resample;
 std::vector<std::string> SurfaceImage::s_files;
 //////// } SurfaceImage //////// 

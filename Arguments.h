@@ -30,7 +30,7 @@ class Arguments {
     float xmin, xmax, ymin, ymax, resample;
     bool lights, axis, falseColors, imageColors;
     bool renderVideo, verbose, loop, help;
-    std::string drawModeStr, saveDir, functionCode;
+    std::string drawModeStr, saveDir, textureImg, functionCode;
     std::vector<std::string> images;
 };
 

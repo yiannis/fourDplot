@@ -14,7 +14,7 @@ Arguments::Arguments() :
   xmin(-5.0F), xmax(5.0F), ymin(-5.0F), ymax(5.0F),
   lights(false), axis(false), falseColors(false), imageColors(false),
   renderVideo(false), verbose(false), loop(false), help(false),
-  drawModeStr("lines"), saveDir(".")
+  drawModeStr("lines"), saveDir("."), textureImg("")
 
 {
   m_optsDesc.add_options()
@@ -30,7 +30,7 @@ Arguments::Arguments() :
     ("points,p", po::value<int>(&points), "Total number of points(vertices)\n")
     ("images,i", po::value< vector<string> >(&images), "Use image file(s) from command line")
     ("resample,r", po::value<float>(&resample), "Scale image(s) before rendering [used with --images]")
-    ("image-colors", "Use original image colors [used with --images]\n")
+    ("image-colors", po::value<string>(&textureImg), "Use original image colors or of given image [used with --images]\n")
     ("function,f", po::value<string>(&functionCode), "Supply a (one line) function body f(x,y,t)")
     ("xmin", po::value<float>(&xmin), "Minimum x value [used with --function]")
     ("xmax", po::value<float>(&xmax), "Maximum x value [used with --function]")
@@ -105,6 +105,7 @@ void Arguments::printHelp() const
 void Arguments::printAllValues() const
 {
   int size = min( (int)images.size(), 3 );
+  string texture(imageColors?"yes":"no");
 
   cout << "lights\t\t= "      << string(lights?"yes":"no") << endl;
   cout << "axis\t\t= "        << string(axis?"yes":"no") << endl;
@@ -118,7 +119,8 @@ void Arguments::printAllValues() const
   switch (mode) {
     case IMAGE:
       cout << "resample\t= "      << resample << endl;
-      cout << "image-colors\t= "  << string(imageColors?"yes":"no") << endl;
+      if (textureImg != "") texture = textureImg;
+      cout << "image-colors\t= " << textureImg << endl;
       cout << "images\t\t= ";
       for (int i=0; i<size; i++)
         cout << images[i] << " ";

@@ -47,18 +47,20 @@ the rotation, zoom, etc.
 
 
 Examples:
-$ plot4D -d line -f "sin(x*y)/(x*y)" -p 3000 -l -a --false-colors
+$ ./plot4D -d line -f "sin(x*y)/(x*y)" -p 3000 -l -a --false-colors
 
-$ plot4D -d fill -f "sin(x+y^2)" -p 5000 -l --xmin -4 --xmax 3 --ymin -2.2 --ymax 2.4 --false-colors -a
+$ ./plot4D -d fill -f "sin(x+y^2)" -p 5000 -l --xmin -4 --xmax 3 --ymin -2.2 --ymax 2.4 --false-colors -a
 
-$ plot4D -d fill -p 7000 -a --false-colors --lights -f "2*sin((x^2+y^2)*cos(2*pi/300*t))/(x^2+y^2)" --video --duration 10 --loop
+$ ./plot4D -d fill -p 7000 -a --false-colors --lights -f "2*sin((x^2+y^2)*cos(2*pi/300*t))/(x^2+y^2)" --video --duration 10 --loop
 
-$ plot4D -d point -p 5000 -f "0.4*sin(x+y)/(x^2+y^2)" --xmin -2 --xmax 2 --ymin -2 --ymax 2
+$ ./plot4D -d point -p 5000 -f "0.4*sin(x+y)/(x^2+y^2)" --xmin -2 --xmax 2 --ymin -2 --ymax 2
 
-$ plot4D -d point -p 2000 -f "0.4*cos((2*pi/150)*t)*sin(x+y)/(x^2+y^2)" --xmin -2 --xmax 2 --ymin -2 --ymax 2 --video --duration 5 --loop
+$ ./plot4D -d point -p 2000 -f "0.4*cos((2*pi/150)*t)*sin(x+y)/(x^2+y^2)" --xmin -2 --xmax 2 --ymin -2 --ymax 2 --video --duration 5 --loop
 
-$ plot4D penguin-flat.png -d point -r 0.4 --false-color --lights
+$ ./plot4D penguin-flat.png -d point -r 0.4 --false-color --lights
 
+$ ./plot4D -l -d fill -p 500 -i face-height.png --image-colors face-texture.png
+[Use one image as height map an another as a texture (both of identical dimentions)
 
 
 Control Keys:

@@ -122,18 +122,20 @@ class SurfaceImage : public Surface {
     Magick::Image* m_image; ///< A 3D surface will be created, representing this image
 
 	public:
-    SurfaceImage( const std::string& file, float ratio );
+    SurfaceImage( const std::string& imageFile, const std::string& textureFile, float ratio );
 		~SurfaceImage();
 
     static void create(int cacheIndex, int fileIndex);
 
+    static std::string s_texture; ///< The texture filename
     static float s_resample; ///< Image resample ratio
 		static std::vector<std::string> s_files; ///< The list of image files
 
   protected:
 		virtual void createVertices();
 
-    void createImageColors();
+    void createImageColors(Magick::Image* image);
+    void createTexture( const std::string& textureFile, float ratio );
 };
 
 /// SurfaceFunction
